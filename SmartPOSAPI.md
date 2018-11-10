@@ -1,11 +1,11 @@
 ---
-id: smart-app-api
+id: SmartPOSAPI
 title: راهنمای فنی اتصال به APP API کارت‌خوان‌های هوشمند دماوند
 sidebar_label: API کارت‌خوان هوشمند
-custom_edit_url: https://github.com/ecdco/docs/blob/master/smart-app-api.md
+custom_edit_url: https://github.com/ecdco/docs/blob/master/SmartPOSAPI.md
 ---
 
-نسخه 1.0
+نسخه 1٫0
 
 ## مقدمه
 این مستند به شیوه تعامل اپلیکیشن‌های شخص ثالث با اپلیکیشن پرداخت شرکت الکترونیک کارت دماوند موجود بر روی دستگاه‌های کارت‌خوان هوشمند می‌پردازد، به گونه‌ای که این اپلیکیشن‌ها بتوانند بدون کوچکترین درگیری با امور مربوط به پرداخت در شبکه شاپرک، تراکنش‌های مالی خود را به انجام و نتیجه حاصل را بدون کاستی دریافت نمایند.
@@ -514,7 +514,7 @@ boolean result = configRequest.send();
 
 ## نمونه پروژه اندروید
 
-
+برای دریافت نمونه پروژه می‌توانید به صفحه [گیت‌هاب (github.com/ecdco/SmartPOSAPISample)](https://github.com/ecdco/SmartPOSAPISample) اختصاص یافته به این موضوع مراجعه نمایید.
 
 
 
