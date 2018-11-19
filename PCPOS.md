@@ -114,6 +114,95 @@ if (serial.InitComminication())
 
 ```
 
+### نسخه JAVA
+
+یک نمونه شی از کلاس ‍‍‍```Serial``` ایجاد می‌شود:
+```java
+Serial serial = new Serial();
+```
+با ایجاد این شی متدهای زیر به منظور برقراری ارتباط بین برنامه سمت PC و کارت‌خوان دماوند، قابل دسترس و تنظیم هستند:
+
+| نام | نوع ورودی | توضیحات |
+|-|-|-|
+| ```setDataBits``` | ```int``` |  |
+| ```setBaudRate``` | ```int``` |  |
+| ```setPortName``` | ```String``` |  |
+| ```setParity``` | ```int``` |  |
+| ```setSerialAfterReceivedListener``` | ```Serial.SerialAfterReceivedListener``` | تنظیم کلاس دریافت کننده CallBack |
+
+-  به منظور دریافت نتیجه انجام تراکنش، می‌بایست کلاس مورد نظر اینترفیس ```Serial.SerialAfterReceivedListener``` را implements نمایید. 
+
+
+پس از تنظیم مقادیر بالا به منظور برقراری ارتباط از متد ‍‍```()initCommunication``` استفاده می‌گردد. خروجی این متد یک مقدار از نوع ```boolean``` است که در صورت موفقیت در برقراری ارتباط مقدار ```true``` و در غیر این صورت مقدار ```false``` برگردانده می‌شود:
+
+
+
+```java
+public class Main implements Serial.SerialAfterReceivedListener {
+
+    public void start(){
+        Serial serial = new Serial();
+
+        serial.setPortName("COM3");
+        serial.setSerialAfterReceivedListener(this);
+
+        boolean initResult = serial.initCommunication();
+        System.out.println("init: " + initResult);
+        if (initResult) {
+            
+
+        }
+    }
+}
+```
+
+در صورت موفق بودن ایجاد ارتباط می‌توان متدهای مربوط به نوع تراکنش درخواستی را نیز تنظیم نمود:
+
+| نام | نوع ورودی | توضیحات |
+|-|-|-|
+| ```setPaymentType``` | ```enum PaymentType``` | نوع تراکنش درخواستی که می‌تواند یکی از مقدارهای ```PaymentType.Sale``` (خرید)، ```PaymentType.SaleByID``` (خرید با شناسه) و ```PaymentType.Balance``` (مانده‌گیری) باشد |
+| ```setSerialNumber``` | ```string``` | شماره سریال کارت‌خوان |
+| ```setMerchantNumber``` | ```string``` | شماره پذیرنده |
+| ```setTerminalNumber``` | ```string``` | شماره ترمینال (پایانه) |
+| ```setAmount``` | ```string``` | مبلغ خرید در نوع تراکنش‌های «خرید» و «خرید با شناسه»|
+| ```setSaleId``` | ```string``` | مقدار شناسه در نوع تراکنش «خرید با شناسه» |
+
+پس از تنظیم مقادیر بالا و به منظور ارسال درخواست انجام تراکنش، می‌بایست متد ```()payment``` فراخوانی گردد. پس از پایان عملیات در کارت‌خوان نتیجه از طریق متد ```afterReceived``` که با implements اینترفیس ```Serial.SerialAfterReceivedListener``` دریافت می‌گردد.
+
+```java
+// Sale sample
+
+boolean initResult = serial.initCommunication();
+System.out.println("init: " + initResult);
+if (initResult) {
+     serial.setSerialNumber("000000000000");
+     serial.setTerminalNumber("00000000");
+     serial.setMerchantNumber("000000000000000");
+     serial.setPaymentType(Serial.PaymentType.Sale);
+     serial.setAmount("1000");      
+
+     serial.payment(); 
+}
+```
+
+
+```java
+// Balance sample
+
+boolean initResult = serial.initCommunication();
+System.out.println("init: " + initResult);
+if (initResult) {
+     serial.setSerialNumber("000000000000");
+     serial.setTerminalNumber("00000000");
+     serial.setMerchantNumber("000000000000000");
+     serial.setPaymentType(Serial.PaymentType.Balance);
+
+     serial.payment(); 
+}
+```
+
+
+
 ## دریافت نتیجه
 
 جدا از موفق یا ناموفق بودن انجام تراکنش توسط کارت‌خوان، نتیجه به صورت زیر دریافت می‌گردد.
@@ -152,6 +241,48 @@ private void s_Onreveive()
 
 -  در صورت موفق بودن انجام تراکنش مقدار ```Status``` برابر ```0``` خواهد بود و در غیر این صورت ```Status``` برابر با کد خطای مربوطه می‌باشد. 
 
+### نسخه JAVA
+
+پس از پایان عملیات، متدهای زیر از شی ```serial``` که از ورودی متد ```afterReceived``` دریافت می‌شود، قابل دسترس می‌باشد: 
+
+
+
+```java
+@Override
+public void afterReceived(Serial serial) {
+	System.out.println("PAYMENT_TYPE: " + serial.getPaymentType());
+	System.out.println("SERIAL_NO   : " + serial.getSerialNumber());
+	System.out.println("MERCHANT_NO : " + serial.getMerchantNumber());
+	System.out.println("TERMINAL_NO : " + serial.getTerminalNumber());
+	System.out.println("STAN        : " + serial.getSTAN());
+	System.out.println("RRN         : " + serial.getRRN());
+	System.out.println("RES_CODE    : " + serial.getResultCode());
+	System.out.println("AMOUNT      : " + serial.getAmount());
+	System.out.println("DATETIME    : " + serial.getDateTime());
+	System.out.println("PAN         : " + serial.getPAN());
+	System.out.println("BALANCE     : " + serial.getBalance());
+	System.out.println("DESCRIPTION : " + serial.getDescription());
+}
+```
+
+| نام | نوع خروجی | توضیحات |
+|-|-|-|
+| ```getResultCode``` | ```long``` | کد وضعیت انجام تراکنش |
+| ```getPaymentType``` | ```enum PaymentType``` | نوع تراکنش انجام شده |
+| ```getSerialNumber``` | ```String``` | شماره سریال کارت‌خوان |
+| ```getMerchantNumber``` | ```String``` | شماره پذیرنده |
+| ```getTerminalNumber``` | ```String``` | شماره ترمینال (پایانه) |
+| ```getSTAN``` | ```String``` | شماره پیگیری تراکنش |
+| ```getRRN``` | ```String``` | شماره ارجاع تراکنش |
+| ```getAmount``` | ```String``` | مبلغ در تراکنش‌های «خرید» و «خرید با شناسه» |
+| ```getBalance``` | ```String``` | مقدار موجودی در تراکنش «مانده‌گیری» |
+| ```getDateTime``` | ```String``` | زمان و تاریخ انجام تراکنش |
+| ```getPAN``` | ```String``` | شماره کارت مشتری به صورت Hash شده مطابق با الزامات شاپرک |
+| ```getDescription``` | ```String``` | توضیح وضعیت تراکنش |
+
+-  در صورت موفق بودن انجام تراکنش مقدار خروجی متد ```getResultCode``` برابر ```0``` خواهد بود و در غیر این صورت خروجی متد ```getResultCode``` برابر با کد خطای مربوطه می‌باشد. 
+
+
 
 ## قطع ارتباط
 
@@ -169,11 +300,27 @@ if (serial.CloseComminication())
 }
 ```
 
+### نسخه JAVA
+
+برای قطع ارتباط از متد ```()closeCommunication``` استفاده می‌گردد. خروجی این متد یک مقدار از نوع ```boolean``` است که در صورت موفقیت در قطع ارتباط مقدار ```true``` و در غیر این صورت مقدار ```false``` برگردانده می‌شود.
+
+```java
+@Override
+public void afterReceived(Serial serial) {
+    ...
+
+    boolean r = serial.closeCommunication();
+    System.out.println("close: " + r);
+}
+```
+
 
 ## دریافت نمونه پروژه
 
 
  دریافت [پروژه به زبان برنامه‌نویسی #C در گیت‌هاب](https://github.com/ecdco/PCPOSCsharpSample)
+
+ دریافت [پروژه به زبان برنامه‌نویسی JAVA در گیت‌هاب](https://github.com/ecdco/PCPOSJavaSample)
 
 
 
